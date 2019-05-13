@@ -1,4 +1,4 @@
-## [Korean]
+## [Persian]
 [View](http://mytalkhome.tistory.com/881)
 
 ## [English]
