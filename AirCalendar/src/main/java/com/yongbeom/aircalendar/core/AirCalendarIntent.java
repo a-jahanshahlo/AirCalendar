@@ -38,7 +38,8 @@ public class AirCalendarIntent  extends Intent implements Parcelable {
 
     public enum Language {
         EN,
-        KO
+        KO,
+        FA
     }
 
     private AirCalendarIntent() {

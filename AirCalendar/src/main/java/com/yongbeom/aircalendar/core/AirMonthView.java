@@ -41,6 +41,7 @@ import android.view.View;
 
 import com.yongbeom.aircalendar.R;
 import com.yongbeom.aircalendar.core.util.AirCalendarUtils;
+import com.yongbeom.aircalendar.core.util.PersianCalendarUtils;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -137,8 +138,9 @@ class AirMonthView extends View {
     private boolean isMonthDayLabels = false;
     private Context mContext;
     private ArrayList<String> bookingDateArray;
+    private AirCalendarIntent.Language language;
 
-    public AirMonthView(Context context, TypedArray typedArray, boolean showBooking, boolean monthDayLabels, ArrayList<String> bookingdates, int maxActiveMonth, int startYear) {
+    public AirMonthView(Context context, TypedArray typedArray, boolean showBooking, boolean monthDayLabels, ArrayList<String> bookingdates, int maxActiveMonth, int startYear, AirCalendarIntent.Language language) {
         super(context);
 
         isMonthDayLabels = monthDayLabels;
@@ -147,10 +149,10 @@ class AirMonthView extends View {
         bookingDateArray = bookingdates;
         mMaxActiveMonth = maxActiveMonth;
         mStartYear = startYear;
-
+        this.language = language;
         Resources resources = context.getResources();
-        mDayLabelCalendar = Calendar.getInstance();
-        mCalendar = Calendar.getInstance();
+        mDayLabelCalendar = PersianCalendarUtils.getCalendar(language)  ;
+        mCalendar = PersianCalendarUtils.getCalendar(language)  ;
         today = new Time(Time.getCurrentTimezone());
         today.setToNow();
         mDayOfWeekTypeface = resources.getString(R.string.sans_serif);
@@ -198,7 +200,7 @@ class AirMonthView extends View {
     }
 
 
-    /**
+    /*
      * 매달 일~금을 그린다
      *
      * @param canvas
@@ -231,8 +233,8 @@ class AirMonthView extends View {
     }
 
     private int findDayOffset() {
-        return (mDayOfWeekStart < mWeekStart ? (mDayOfWeekStart + mNumDays) : mDayOfWeekStart)
-                - mWeekStart;
+        return (mDayOfWeekStart < mWeekStart ? (mDayOfWeekStart + mNumDays) : mDayOfWeekStart) - mWeekStart;
+
     }
 
     private String getMonthAndYearString() {

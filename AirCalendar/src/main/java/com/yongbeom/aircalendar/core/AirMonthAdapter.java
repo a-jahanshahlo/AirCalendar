@@ -34,6 +34,8 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
 
 import com.yongbeom.aircalendar.R;
+import com.yongbeom.aircalendar.core.util.PersianCalendar;
+import com.yongbeom.aircalendar.core.util.PersianCalendarUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -60,7 +62,7 @@ public class AirMonthAdapter extends RecyclerView.Adapter<AirMonthAdapter.ViewHo
     private int mStartYear = -1;
     private SelectModel mSelectModel;
     private ArrayList<String> mBookingDates;
-
+    private AirCalendarIntent.Language language;
     public AirMonthAdapter(Context context,
                            DatePickerController datePickerController,
                            TypedArray typedArray,
@@ -70,14 +72,18 @@ public class AirMonthAdapter extends RecyclerView.Adapter<AirMonthAdapter.ViewHo
                            SelectModel selectedDay,
                            int maxActiveMonth,
                            int startYear,
-                           int firstDayOfWeek
+                           int firstDayOfWeek,
+                             AirCalendarIntent.Language language
     ) {
-
+        this.language=language;
         this.typedArray = typedArray;
-        calendar = Calendar.getInstance();
+        (new PersianCalendar()).getPersianMonth();
+        calendar =this.language== AirCalendarIntent.Language.FA? new PersianCalendar():Calendar.getInstance()  ;
         calendar.setFirstDayOfWeek(firstDayOfWeek);
+
         firstMonth = typedArray.getInt(R.styleable.DayPickerView_firstMonth, calendar.get(Calendar.MONTH));
         lastMonth = typedArray.getInt(R.styleable.DayPickerView_lastMonth, (calendar.get(Calendar.MONTH) - 1) % MONTHS_IN_YEAR);
+
         mCanSelectBeforeDay = typedArray.getBoolean(R.styleable.DayPickerView_canSelectBeforeDay, false);
         mIsSingleSelect = typedArray.getBoolean(R.styleable.DayPickerView_isSingleSelect, false);
         selectedDays = new SelectedDays<>();
@@ -102,7 +108,7 @@ public class AirMonthAdapter extends RecyclerView.Adapter<AirMonthAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        final AirMonthView airMonthView = new AirMonthView(mContext, typedArray, isShowBooking, isMonthDayLabels, mBookingDates, mMaxActiveMonth, mStartYear);
+        final AirMonthView airMonthView = new AirMonthView(mContext, typedArray, isShowBooking, isMonthDayLabels, mBookingDates, mMaxActiveMonth, mStartYear,language);
         return new ViewHolder(airMonthView, this);
     }
 

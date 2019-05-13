@@ -53,7 +53,7 @@ public class DayPickerView extends RecyclerView {
     private TypedArray typedArray;
     private OnScrollListener onScrollListener;
     private SelectModel mSelectModel = null;
-
+private AirCalendarIntent.Language language;
 
     public DayPickerView(Context context) {
         this(context, null);
@@ -76,6 +76,9 @@ public class DayPickerView extends RecyclerView {
         this.mController = mController;
         setUpAdapter();
         setAdapter(mAdapter);
+    }
+    public void setLanguage(AirCalendarIntent.Language language) {
+        this.language = language;
     }
 
     public void setShowBooking(boolean isbooking) {
@@ -122,7 +125,7 @@ public class DayPickerView extends RecyclerView {
 
     protected void setUpAdapter() {
         if (mAdapter == null) {
-            mAdapter = new AirMonthAdapter(getContext(), mController, typedArray, isBooking, isMonthDayLabels, isSingleSelect, mBookingDates, mSelectModel, mMaxActiveMonth, mSetStartYear, mFirstDayOfWeek);
+            mAdapter = new AirMonthAdapter(getContext(), mController, typedArray, isBooking, isMonthDayLabels, isSingleSelect, mBookingDates, mSelectModel, mMaxActiveMonth, mSetStartYear, mFirstDayOfWeek,language);
         }
         mAdapter.notifyDataSetChanged();
     }

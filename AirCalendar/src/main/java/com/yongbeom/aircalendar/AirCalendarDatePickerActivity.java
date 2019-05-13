@@ -26,7 +26,9 @@ package com.yongbeom.aircalendar;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -106,7 +108,7 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
     private String SELECT_START_DATE = "";
     private String SELECT_END_DATE = "";
     private int BASE_YEAR = 2018;
-    private int firstDayOfWeek = Calendar.SUNDAY;
+    private int firstDayOfWeek;// = Calendar.SUNDAY;
 
     private String FLAG = "all";
     private boolean isSelect = false;
@@ -124,7 +126,7 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
     private int eMonth = 0;
     private int eDay = 0;
 
-    private AirCalendarIntent.Language language = AirCalendarIntent.Language.KO;
+    private AirCalendarIntent.Language language = AirCalendarIntent.Language.FA;
 
     private int maxActivieMonth = -1;
     private int maxYear = -1;
@@ -153,7 +155,7 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
         eYear = getData.getIntExtra(EXTRA_SELECT_DATE_EY, 0);
         eMonth = getData.getIntExtra(EXTRA_SELECT_DATE_EM, 0);
         eDay = getData.getIntExtra(EXTRA_SELECT_DATE_ED, 0);
-
+//بررسی می شود که آیا سال ما و روز خالی نباشد
         if (sYear == 0 || sMonth == 0 || sDay == 0
                 || eYear == 0 || eMonth == 0 || eDay == 0) {
             selectDate = new SelectModel();
@@ -211,6 +213,10 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
                     List<String> koList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.label_calender_week)));
                     weekDays.addAll(koList);
                     break;
+                case FA:
+                    List<String> faList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.label_calendar_fa)));
+                    weekDays.addAll(faList);
+                    break;
             }
         }
 
@@ -219,17 +225,20 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
         if (weekDays.isEmpty()) {
             throw new RuntimeException("Language not supported or non existent");
         } else {
-            int weekStart = firstDayOfWeek - 2;
+            // بررسی می شود که زبان فارسی است در اینصورت ترتیب چیدمان روز های هفته از شنبه باشد
+            int weekStart = (language == AirCalendarIntent.Language.FA ? firstDayOfWeek : firstDayOfWeek - 2);
 
             for (int week = 0; week < 7; week++) {
                 int weekDay = weekStart + week;
+                // اگر عدد حاصل بزرگتر از 7 و کوچکتر 0 بود باید تصحیح شود
                 if (weekDay < 0) {
                     weekDay += 7;
                 }
                 if (weekDay > 6) {
                     weekDay -= 7;
                 }
-                Log.d("DOW", week + "/" + weekDay+":" + weekDays.get(weekDay));
+                Log.d("DOW", week + "/" + weekDay + ":" + weekDays.get(weekDay));
+                // برای به دست اوردن نام روط های هفته و نمایش آن در کنترلر تقویم
                 switch (week) {
                     case 0:
                         tv_day_one.setText(weekDays.get(weekDay));
@@ -257,26 +266,27 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
             }
 
         }
-
+// تنظیمات نمایش نمایش ماه های تقویم
         pickerView = findViewById(R.id.pickerView);
         pickerView.setIsMonthDayLabel(isMonthLabel);
         pickerView.setIsSingleSelect(isSingleSelect);
         pickerView.setMaxActiveMonth(maxActivieMonth);
         pickerView.setStartYear(mSetStartYear);
-
+        pickerView.setLanguage(language);
         pickerView.setFirstDayOfWeek(firstDayOfWeek);
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy", Locale.KOREA);
-        Date currentTime = new Date();
-        String dTime = formatter.format(currentTime);
 
         if (maxYear != -1 && maxYear > Integer.parseInt(new DateTime().toString("yyyy"))) {
             BASE_YEAR = maxYear;
         } else {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy", Locale.US);
+            Date currentTime = new Date();
+            String dTime = formatter.format(currentTime);
+
             // default : now year + 2 year
             BASE_YEAR = Integer.valueOf(dTime) + 2;
         }
-
+// بررسی میشود که آیا تاریخی برای نمایش انتخاب شده است
         if (dates != null && dates.size() != 0 && isBooking) {
             pickerView.setShowBooking(true);
             pickerView.setBookingDateArray(dates);

@@ -27,9 +27,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         AirCalendarIntent intent = new AirCalendarIntent(this);
+
         intent.setSelectButtonText("Select");
         intent.setResetBtnText("Reset");
-        intent.setWeekStart(Calendar.MONDAY);
+        intent.setWeekStart(Calendar.SATURDAY);
+        intent.setWeekDaysLanguage(AirCalendarIntent.Language.FA);
+        intent.putExtra(AirCalendarDatePickerActivity.WEEK_LANGUAGE,AirCalendarIntent.Language.FA.toString());
 //        ArrayList<String> weekDay = new ArrayList<>();
 //        weekDay.add("M");
 //        weekDay.add("T");

@@ -20,4 +20,13 @@
         <item name="6">S</item>
         <item name="7">S</item>
     </string-array>
+    <string-array name="label_calendar_fa">
+        <item name="1">ش</item>
+        <item name="2">ی</item>
+        <item name="3">د</item>
+        <item name="4">س</item>
+        <item name="5">چ</item>
+        <item name="6">پ</item>
+        <item name="7">ج</item>
+    </string-array>
 </resources>
