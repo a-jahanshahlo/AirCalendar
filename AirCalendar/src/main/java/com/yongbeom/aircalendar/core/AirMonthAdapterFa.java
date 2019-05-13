@@ -1,41 +1,13 @@
-/***********************************************************************************
- * The MIT License (MIT)
- * <p/>
- * Copyright (c) 2017 - 2019 LeeYongBeom( top6616@gmail.com )
- * https://github.com/yongbeam
- * <p/>
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * <p/>
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * <p/>
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- ***********************************************************************************/
 package com.yongbeom.aircalendar.core;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
 
 import com.yongbeom.aircalendar.R;
 import com.yongbeom.aircalendar.core.util.PersianCalendar;
-import com.yongbeom.aircalendar.core.util.PersianCalendarUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -43,13 +15,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
-public class AirMonthAdapter extends RecyclerView.Adapter<AirMonthAdapter.ViewHolder> implements AirMonthView.OnDayClickListener {
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.ViewHolder> implements AirMonthView.OnDayClickListener {
     private static final int MONTHS_IN_YEAR = 12;
     private final TypedArray typedArray;
     private final Context mContext;
     private final DatePickerController mController;
     private final Calendar calendar;
-    private final SelectedDays<CalendarDay> selectedDays;
+    private final AirMonthAdapter.SelectedDays<AirMonthAdapter.CalendarDay> selectedDays;
     private final Integer firstMonth;
     private final Integer lastMonth;
     private final boolean mCanSelectBeforeDay;
@@ -63,16 +38,16 @@ public class AirMonthAdapter extends RecyclerView.Adapter<AirMonthAdapter.ViewHo
     private SelectModel mSelectModel;
     private ArrayList<String> mBookingDates;
     private AirCalendarIntent.Language language;
-    public AirMonthAdapter(Context context,
-                           DatePickerController datePickerController,
-                           TypedArray typedArray,
-                           boolean showBooking,
-                           boolean monthDayLabels,
-                           boolean isSingle, ArrayList<String> bookingDates,
-                           SelectModel selectedDay,
-                           int maxActiveMonth,
-                           int startYear,
-                           int firstDayOfWeek,
+    public AirMonthAdapterFa(Context context,
+                             DatePickerController datePickerController,
+                             TypedArray typedArray,
+                             boolean showBooking,
+                             boolean monthDayLabels,
+                             boolean isSingle, ArrayList<String> bookingDates,
+                             SelectModel selectedDay,
+                             int maxActiveMonth,
+                             int startYear,
+                             int firstDayOfWeek,
                              AirCalendarIntent.Language language
     ) {
         this.language=language;
@@ -86,7 +61,7 @@ public class AirMonthAdapter extends RecyclerView.Adapter<AirMonthAdapter.ViewHo
 
         mCanSelectBeforeDay = typedArray.getBoolean(R.styleable.DayPickerView_canSelectBeforeDay, false);
         mIsSingleSelect = typedArray.getBoolean(R.styleable.DayPickerView_isSingleSelect, false);
-        selectedDays = new SelectedDays<>();
+        selectedDays = new AirMonthAdapter.SelectedDays<>();
         mContext = context;
         mController = datePickerController;
         isShowBooking = showBooking;
@@ -181,13 +156,21 @@ public class AirMonthAdapter extends RecyclerView.Adapter<AirMonthAdapter.ViewHo
         return (((mController.getMaxYear() - calendar.get(Calendar.YEAR))) * MONTHS_IN_YEAR);
     }
 
+    @Override
+    public void onDayClick(AirMonthView airMonthView, AirMonthAdapter.CalendarDay calendarDay) {
+        if (calendarDay != null) {
+            onDayTapped(calendarDay);
+        }
+    }
+
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final AirMonthView airMonthView;
 
         private ViewHolder(View itemView, AirMonthView.OnDayClickListener onDayClickListener) {
             super(itemView);
             airMonthView = (AirMonthView) itemView;
-            airMonthView.setLayoutParams(new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+            airMonthView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             airMonthView.setClickable(true);
             airMonthView.setOnDayClickListener(onDayClickListener);
         }
@@ -195,21 +178,21 @@ public class AirMonthAdapter extends RecyclerView.Adapter<AirMonthAdapter.ViewHo
 
     private void init() {
         if (typedArray.getBoolean(R.styleable.DayPickerView_currentDaySelected, false))
-            onDayTapped(new CalendarDay(System.currentTimeMillis()));
+            onDayTapped(new AirMonthAdapter.CalendarDay(System.currentTimeMillis()));
     }
 
-    public void onDayClick(AirMonthView airMonthView, CalendarDay calendarDay) {
+/*    public void onDayClick(AirMonthView airMonthView, CalendarDay calendarDay) {
         if (calendarDay != null) {
             onDayTapped(calendarDay);
         }
-    }
+    }*/
 
-    private void onDayTapped(CalendarDay calendarDay) {
+    private void onDayTapped(AirMonthAdapter.CalendarDay calendarDay) {
         mController.onDayOfMonthSelected(calendarDay.year, calendarDay.month, calendarDay.day);
         setSelectedDay(calendarDay);
     }
 
-    private void setSelectedDay(CalendarDay calendarDay) {
+    private void setSelectedDay(AirMonthAdapter.CalendarDay calendarDay) {
 
         if (isSingleSelect) {
             selectedDays.setFirst(calendarDay);
@@ -218,12 +201,12 @@ public class AirMonthAdapter extends RecyclerView.Adapter<AirMonthAdapter.ViewHo
             if (!mIsSingleSelect && selectedDays.getFirst() != null && selectedDays.getLast() == null) {
                 selectedDays.setLast(calendarDay);
 
-                CalendarDay firstDays = selectedDays.getFirst();
+                AirMonthAdapter.CalendarDay firstDays = selectedDays.getFirst();
                 int selectedFirstDay = firstDays.day;
                 int selectedFirstMonth = firstDays.month;
                 int selectedFirstYear = firstDays.year;
 
-                CalendarDay lastDays = selectedDays.getLast();
+                AirMonthAdapter.CalendarDay lastDays = selectedDays.getLast();
                 int selectedLastDay = lastDays.day;
                 int selectedLastMonth = lastDays.month;
                 int selectedLastYear = lastDays.year;
@@ -322,100 +305,10 @@ public class AirMonthAdapter extends RecyclerView.Adapter<AirMonthAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    public static class CalendarDay implements Serializable {
-        private static final long serialVersionUID = -5456695978688356202L;
-        private Calendar calendar;
 
-        int day;
-        int month;
-        int year;
-
-        public CalendarDay() {
-            setTime(System.currentTimeMillis());
-        }
-
-        public CalendarDay(int year, int month, int day) {
-            setDay(year, month, day);
-        }
-
-        public CalendarDay(long timeInMillis) {
-            setTime(timeInMillis);
-        }
-
-        public CalendarDay(Calendar calendar) {
-            year = calendar.get(Calendar.YEAR);
-            month = calendar.get(Calendar.MONTH);
-            day = calendar.get(Calendar.DAY_OF_MONTH);
-        }
-
-        private void setTime(long timeInMillis) {
-            if (calendar == null) {
-                calendar = Calendar.getInstance();
-            }
-            calendar.setTimeInMillis(timeInMillis);
-            month = this.calendar.get(Calendar.MONTH);
-            year = this.calendar.get(Calendar.YEAR);
-            day = this.calendar.get(Calendar.DAY_OF_MONTH);
-        }
-
-        public void set(CalendarDay calendarDay) {
-            year = calendarDay.year;
-            month = calendarDay.month;
-            day = calendarDay.day;
-        }
-
-        public void setDay(int year, int month, int day) {
-            this.year = year;
-            this.month = month;
-            this.day = day;
-        }
-
-        public Date getDate() {
-            if (calendar == null) {
-                calendar = Calendar.getInstance();
-            }
-            calendar.set(year, month, day);
-            return calendar.getTime();
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("{ year: ");
-            stringBuilder.append(year);
-            stringBuilder.append(", month: ");
-            stringBuilder.append(month);
-            stringBuilder.append(", day: ");
-            stringBuilder.append(day);
-            stringBuilder.append(" }");
-
-            return stringBuilder.toString();
-        }
-    }
-
-    public SelectedDays<CalendarDay> getSelectedDays() {
+    public AirMonthAdapter.SelectedDays<AirMonthAdapter.CalendarDay> getSelectedDays() {
         return selectedDays;
     }
 
-    public static class SelectedDays<K> implements Serializable {
-        private static final long serialVersionUID = 3942549765282708376L;
-        private K first;
-        private K last;
 
-        public K getFirst() {
-            return first;
-        }
-
-        public void setFirst(K first) {
-            this.first = first;
-        }
-
-        public K getLast() {
-            return last;
-        }
-
-        public void setLast(K last) {
-            this.last = last;
-        }
-    }
 }

@@ -114,12 +114,12 @@ class AirMonthView extends View {
     protected int mSelectedBeginYear = -1;
     protected int mSelectedLastYear = -1;
     protected int mToday = -1;
-    protected int mWeekStart = 1;
-    protected int mNumDays = 7;
-    protected int mNumCells = mNumDays;
+    protected int mWeekStart = 1;//روز معادل اول هفته
+    protected int mNumDays = 7;// تعداد روز های هفته
+    protected int mNumCells = mNumDays;// تعداد روزهای ماه
     private int mDayOfWeekStart = 0;
     protected int mMonth;
-    protected int mMonthPlus3;
+    protected int mMonthPlus3;// Month+3
     protected Boolean mDrawRect;
     protected int mRowHeight = DEFAULT_HEIGHT;
     protected int mWidth;
@@ -233,6 +233,7 @@ class AirMonthView extends View {
     }
 
     private int findDayOffset() {
+
         return (mDayOfWeekStart < mWeekStart ? (mDayOfWeekStart + mNumDays) : mDayOfWeekStart) - mWeekStart;
 
     }
@@ -329,7 +330,7 @@ class AirMonthView extends View {
         return ((mYear < time.year)) || (mYear == time.year && mMonth < time.month) || (mMonth == time.month && monthDay < time.monthDay);
     }
 
-    /**
+    /**تابع مهم
      * @param canvas
      */
     protected void drawMonthNums(Canvas canvas) {
@@ -351,12 +352,12 @@ class AirMonthView extends View {
                     canvas.drawCircle(x, y - MINI_DAY_NUMBER_TEXT_SIZE / 3, DAY_SELECTED_CIRCLE_SIZE, mSelectedCirclePaint);
                 }
             }
-
+// اگر تاریخ امروز بود رنگ ان فرق کند
             if (mHasToday && (mToday == day)) {
                 mMonthNumPaint.setColor(mCurrentDayTextColor);
                 mMonthNumPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
             }
-
+// اگر روز های قبل بود رنگ آن غیر فعال شود
             if (mToday > day && mStartYear == -1) {
                 mMonthNumPaint.setColor(getResources().getColor(R.color.color_old_day_text_color));
                 mMonthNumPaint.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
@@ -364,7 +365,7 @@ class AirMonthView extends View {
                 mMonthNumPaint.setColor(mDayNumColor);
                 mMonthNumPaint.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
             }
-
+// مشخص شود که آخر هفته است 6 و 7
             if (AirCalendarUtils.isWeekend(mYear + "-" + (mMonth + 1) + "-" + day)) {
                 if (mToday > day && mStartYear == -1) {
                     mMonthNumPaint.setColor(getResources().getColor(R.color.color_old_day_text_color));
@@ -687,6 +688,7 @@ class AirMonthView extends View {
 
     public static abstract interface OnDayClickListener {
         public abstract void onDayClick(AirMonthView airMonthView, AirMonthAdapter.CalendarDay calendarDay);
+
     }
 
 
