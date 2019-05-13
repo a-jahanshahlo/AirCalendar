@@ -24,11 +24,14 @@
  ***********************************************************************************/
 package com.yongbeom.aircalendar.core;
 
+import com.yongbeom.aircalendar.core.util.CalendarDay;
+import com.yongbeom.aircalendar.core.util.SelectedDays;
+
 public interface DatePickerController {
 	public abstract int getMaxYear();
 
 	public abstract void onDayOfMonthSelected(int year, int month, int day);
 
-    public abstract void onDateRangeSelected(final AirMonthAdapter.SelectedDays<AirMonthAdapter.CalendarDay> selectedDays);
+	public abstract void onDateRangeSelected(final SelectedDays<CalendarDay> selectedDays);
 
 }

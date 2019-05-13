@@ -1,27 +1,3 @@
-/***********************************************************************************
- * The MIT License (MIT)
- * <p/>
- * Copyright (c) 2017 - 2019 LeeYongBeom( top6616@gmail.com )
- * https://github.com/yongbeam
- * <p/>
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * <p/>
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * <p/>
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- ***********************************************************************************/
 package com.yongbeom.aircalendar.core;
 
 import android.content.Context;
@@ -29,8 +5,6 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Paint.Align;
-import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.text.format.DateUtils;
@@ -56,8 +30,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
-class AirMonthView extends View {
-    private String TAG = "AirMonthView";
+public class AirMonthFaView extends View {
+    private String TAG = "AirMonthFaView";
 
     public static final String VIEW_PARAMS_HEIGHT = "height";
     public static final String VIEW_PARAMS_MONTH = "month";
@@ -141,7 +115,7 @@ class AirMonthView extends View {
     private ArrayList<String> bookingDateArray;
     private AirCalendarIntent.Language language;
 
-    public AirMonthView(Context context, TypedArray typedArray, boolean showBooking, boolean monthDayLabels, ArrayList<String> bookingdates, int maxActiveMonth, int startYear, AirCalendarIntent.Language language) {
+    public AirMonthFaView(Context context, TypedArray typedArray, boolean showBooking, boolean monthDayLabels, ArrayList<String> bookingdates, int maxActiveMonth, int startYear, AirCalendarIntent.Language language) {
         super(context);
 
         isMonthDayLabels = monthDayLabels;
@@ -247,7 +221,7 @@ class AirMonthView extends View {
         return DateUtils.formatDateRange(getContext(), millis, millis, flags);    // 지역화된 포멧으로 출력
     }
 
-    private void onDayClick( CalendarDay calendarDay) {
+    private void onDayClick(CalendarDay calendarDay) {
         boolean isClick = false;
 
         if (mToday <= calendarDay.day || mStartYear > -1) {
@@ -516,7 +490,7 @@ class AirMonthView extends View {
 
     }
 
-    public CalendarDay getDayFromLocation(float x, float y) {
+    public  CalendarDay getDayFromLocation(float x, float y) {
 
         int padding = mPadding;
         if ((x < padding) || (x > mWidth - mPadding)) {
@@ -540,22 +514,22 @@ class AirMonthView extends View {
         mMonthTitlePaint.setTextSize(MONTH_LABEL_TEXT_SIZE);
         mMonthTitlePaint.setTypeface(Typeface.create(mMonthTitleTypeface, Typeface.BOLD));
         mMonthTitlePaint.setColor(mMonthTextColor);
-        mMonthTitlePaint.setTextAlign(Align.LEFT);
-        mMonthTitlePaint.setStyle(Style.FILL);
+        mMonthTitlePaint.setTextAlign(Paint.Align.LEFT);
+        mMonthTitlePaint.setStyle(Paint.Style.FILL);
 
         mMonthTitleBGPaint = new Paint();
         mMonthTitleBGPaint.setFakeBoldText(true);
         mMonthTitleBGPaint.setAntiAlias(true);
         mMonthTitleBGPaint.setColor(mMonthTitleBGColor);
-        mMonthTitleBGPaint.setTextAlign(Align.CENTER);
-        mMonthTitleBGPaint.setStyle(Style.FILL);
+        mMonthTitleBGPaint.setTextAlign(Paint.Align.CENTER);
+        mMonthTitleBGPaint.setStyle(Paint.Style.FILL);
 
         mSelectedCirclePaint = new Paint();
         mSelectedCirclePaint.setFakeBoldText(true);
         mSelectedCirclePaint.setAntiAlias(true);
         mSelectedCirclePaint.setColor(mSelectedDaysBgColor);
-        mSelectedCirclePaint.setTextAlign(Align.CENTER);
-        mSelectedCirclePaint.setStyle(Style.FILL);
+        mSelectedCirclePaint.setTextAlign(Paint.Align.CENTER);
+        mSelectedCirclePaint.setStyle(Paint.Style.FILL);
 
         mSelectedIntervalPaint = new Paint();
         mSelectedIntervalPaint.setAntiAlias(true);
@@ -567,8 +541,8 @@ class AirMonthView extends View {
         mMonthDayLabelPaint.setTextSize(MONTH_DAY_LABEL_TEXT_SIZE);
         mMonthDayLabelPaint.setColor(getResources().getColor(R.color.colorMonthDayLabelPaint));
         mMonthDayLabelPaint.setTypeface(Typeface.create(mDayOfWeekTypeface, Typeface.NORMAL));
-        mMonthDayLabelPaint.setStyle(Style.FILL);
-        mMonthDayLabelPaint.setTextAlign(Align.CENTER);
+        mMonthDayLabelPaint.setStyle(Paint.Style.FILL);
+        mMonthDayLabelPaint.setTextAlign(Paint.Align.CENTER);
         mMonthDayLabelPaint.setFakeBoldText(true);
 
         mWeekDayLinePaint = new Paint();
@@ -579,8 +553,8 @@ class AirMonthView extends View {
         mMonthNumPaint = new Paint();
         mMonthNumPaint.setAntiAlias(true);
         mMonthNumPaint.setTextSize(MINI_DAY_NUMBER_TEXT_SIZE);
-        mMonthNumPaint.setStyle(Style.FILL);
-        mMonthNumPaint.setTextAlign(Align.CENTER);
+        mMonthNumPaint.setStyle(Paint.Style.FILL);
+        mMonthNumPaint.setTextAlign(Paint.Align.CENTER);
         mMonthNumPaint.setFakeBoldText(false);
     }
 
@@ -603,7 +577,7 @@ class AirMonthView extends View {
 
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            CalendarDay calendarDay = getDayFromLocation(event.getX(), event.getY());
+             CalendarDay calendarDay = getDayFromLocation(event.getX(), event.getY());
             if (calendarDay != null) {
                 onDayClick(calendarDay);
             }
@@ -688,8 +662,7 @@ class AirMonthView extends View {
     }
 
     public static abstract interface OnDayClickListener {
-        public abstract void onDayClick(AirMonthView airMonthView,   CalendarDay calendarDay);
-
+        public abstract void onDayClick(AirMonthFaView airMonthView,  CalendarDay calendarDay);
 
     }
 

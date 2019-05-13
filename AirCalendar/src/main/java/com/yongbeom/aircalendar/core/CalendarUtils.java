@@ -28,7 +28,33 @@ import java.util.Calendar;
 
 
 public class CalendarUtils {
-	public static int getDaysInMonth(int month, int year) {
+    public static int getDaysInPersianMonth(int month, int year) {
+        switch (month) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+
+                return 31;
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+                return 30;
+            case 11:
+                return ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) ? 28 : 29;
+            default:
+                throw new IllegalArgumentException("Invalid Month");
+        }
+    }
+
+    public static int getDaysInMonth(int month, int year, AirCalendarIntent.Language language) {
+        if (language== AirCalendarIntent.Language.FA){
+            return getDaysInPersianMonth(month,year);
+        }
         switch (month) {
             case Calendar.JANUARY:
             case Calendar.MARCH:
@@ -48,5 +74,5 @@ public class CalendarUtils {
             default:
                 throw new IllegalArgumentException("Invalid Month");
         }
-	}
+    }
 }

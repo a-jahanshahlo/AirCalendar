@@ -26,11 +26,15 @@ package com.yongbeom.aircalendar.core;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.AttributeSet;
 
 import com.yongbeom.aircalendar.R;
+import com.yongbeom.aircalendar.core.util.CalendarDay;
+import com.yongbeom.aircalendar.core.util.SelectedDays;
 
 import java.util.ArrayList;
 
@@ -39,6 +43,7 @@ public class DayPickerView extends RecyclerView {
 
     protected Context mContext;
     protected AirMonthAdapter mAdapter;
+    protected AirMonthAdapterFa mAdapterFa;
     protected int mCurrentScrollState = 0;
     protected long mPreviousScrollPosition;
     protected int mPreviousScrollState = 0;
@@ -53,7 +58,7 @@ public class DayPickerView extends RecyclerView {
     private TypedArray typedArray;
     private OnScrollListener onScrollListener;
     private SelectModel mSelectModel = null;
-private AirCalendarIntent.Language language;
+    private AirCalendarIntent.Language language;
 
     public DayPickerView(Context context) {
         this(context, null);
@@ -74,9 +79,15 @@ private AirCalendarIntent.Language language;
 
     public void setController(DatePickerController mController) {
         this.mController = mController;
-        setUpAdapter();
-        setAdapter(mAdapter);
+        if (language == AirCalendarIntent.Language.FA) {
+            setUpAdapterFa();
+            setAdapter(mAdapterFa);
+        } else {
+            setUpAdapter();
+            setAdapter(mAdapter);
+        }
     }
+
     public void setLanguage(AirCalendarIntent.Language language) {
         this.language = language;
     }
@@ -125,11 +136,17 @@ private AirCalendarIntent.Language language;
 
     protected void setUpAdapter() {
         if (mAdapter == null) {
-            mAdapter = new AirMonthAdapter(getContext(), mController, typedArray, isBooking, isMonthDayLabels, isSingleSelect, mBookingDates, mSelectModel, mMaxActiveMonth, mSetStartYear, mFirstDayOfWeek,language);
+            mAdapter = new AirMonthAdapter(getContext(), mController, typedArray, isBooking, isMonthDayLabels, isSingleSelect, mBookingDates, mSelectModel, mMaxActiveMonth, mSetStartYear, mFirstDayOfWeek, language);
         }
         mAdapter.notifyDataSetChanged();
     }
 
+    protected void setUpAdapterFa() {
+        if (mAdapterFa == null) {
+            mAdapterFa = new AirMonthAdapterFa(getContext(), mController, typedArray, isBooking, isMonthDayLabels, isSingleSelect, mBookingDates, mSelectModel, mMaxActiveMonth, mSetStartYear, mFirstDayOfWeek, language);
+        }
+        mAdapterFa.notifyDataSetChanged();
+    }
 
     protected void setUpListView() {
         setVerticalScrollBarEnabled(false);
@@ -138,9 +155,16 @@ private AirCalendarIntent.Language language;
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                final AirMonthView child = (AirMonthView) recyclerView.getChildAt(0);
-                if (child == null) {
-                    return;
+                if (language == AirCalendarIntent.Language.FA) {
+                    final AirMonthFaView child = (AirMonthFaView) recyclerView.getChildAt(0);
+                    if (child == null) {
+                        return;
+                    }
+                } else {
+                    final AirMonthView child = (AirMonthView) recyclerView.getChildAt(0);
+                    if (child == null) {
+                        return;
+                    }
                 }
 
                 mPreviousScrollPosition = dy;
@@ -152,8 +176,12 @@ private AirCalendarIntent.Language language;
         setFadingEdgeLength(0);
     }
 
-    public AirMonthAdapter.SelectedDays<AirMonthAdapter.CalendarDay> getSelectedDays() {
+    public SelectedDays<CalendarDay> getSelectedDays() {
         return mAdapter.getSelectedDays();
+    }
+
+    public SelectedDays<CalendarDay> getSelectedDaysFa() {
+        return mAdapterFa.getSelectedDays();
     }
 
     public ArrayList<String> getBookingDates() {

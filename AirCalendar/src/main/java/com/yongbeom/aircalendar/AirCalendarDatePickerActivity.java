@@ -40,6 +40,8 @@ import com.yongbeom.aircalendar.core.DatePickerController;
 import com.yongbeom.aircalendar.core.DayPickerView;
 import com.yongbeom.aircalendar.core.SelectModel;
 import com.yongbeom.aircalendar.core.util.AirCalendarUtils;
+import com.yongbeom.aircalendar.core.util.CalendarDay;
+import com.yongbeom.aircalendar.core.util.SelectedDays;
 
 import org.joda.time.DateTime;
 
@@ -392,7 +394,7 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
     }
 
     @Override
-    public void onDateRangeSelected(AirMonthAdapter.SelectedDays<AirMonthAdapter.CalendarDay> selectedDays) {
+    public void onDateRangeSelected(SelectedDays<CalendarDay> selectedDays) {
 
         try {
             Calendar cl = Calendar.getInstance();

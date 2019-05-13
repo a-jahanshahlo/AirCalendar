@@ -7,7 +7,9 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 
 import com.yongbeom.aircalendar.R;
+import com.yongbeom.aircalendar.core.util.CalendarDay;
 import com.yongbeom.aircalendar.core.util.PersianCalendar;
+import com.yongbeom.aircalendar.core.util.SelectedDays;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,13 +20,13 @@ import java.util.HashMap;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.ViewHolder> implements AirMonthView.OnDayClickListener {
+public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.ViewHolder> implements AirMonthFaView.OnDayClickListener {
     private static final int MONTHS_IN_YEAR = 12;
     private final TypedArray typedArray;
     private final Context mContext;
     private final DatePickerController mController;
-    private final Calendar calendar;
-    private final AirMonthAdapter.SelectedDays<AirMonthAdapter.CalendarDay> selectedDays;
+    private final PersianCalendar calendar;
+    private final SelectedDays<CalendarDay> selectedDays;
     private final Integer firstMonth;
     private final Integer lastMonth;
     private final boolean mCanSelectBeforeDay;
@@ -40,28 +42,29 @@ public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.Vi
     private AirCalendarIntent.Language language;
     public AirMonthAdapterFa(Context context,
                              DatePickerController datePickerController,
-                             TypedArray typedArray,
-                             boolean showBooking,
-                             boolean monthDayLabels,
-                             boolean isSingle, ArrayList<String> bookingDates,
-                             SelectModel selectedDay,
-                             int maxActiveMonth,
-                             int startYear,
-                             int firstDayOfWeek,
-                             AirCalendarIntent.Language language
+                           TypedArray typedArray,
+                           boolean showBooking,
+                           boolean monthDayLabels,
+                           boolean isSingle, ArrayList<String> bookingDates,
+                           SelectModel selectedDay,
+                           int maxActiveMonth,
+                           int startYear,
+                           int firstDayOfWeek,
+                           AirCalendarIntent.Language language
     ) {
         this.language=language;
         this.typedArray = typedArray;
-        (new PersianCalendar()).getPersianMonth();
-        calendar =this.language== AirCalendarIntent.Language.FA? new PersianCalendar():Calendar.getInstance()  ;
+       // (new PersianCalendar()).getPersianMonth();
+        calendar = new PersianCalendar() ;
         calendar.setFirstDayOfWeek(firstDayOfWeek);
 // what is this -> first = 4 last =3
-        firstMonth = typedArray.getInt(R.styleable.DayPickerView_firstMonth, calendar.get(Calendar.MONTH));
-        lastMonth = typedArray.getInt(R.styleable.DayPickerView_lastMonth, (calendar.get(Calendar.MONTH) - 1) % MONTHS_IN_YEAR);
+
+        firstMonth = typedArray.getInt(R.styleable.DayPickerView_firstMonth,calendar.getPersianMonth()-1);
+        lastMonth = typedArray.getInt(R.styleable.DayPickerView_lastMonth, (calendar.getPersianMonth() - 2) % MONTHS_IN_YEAR);
 
         mCanSelectBeforeDay = typedArray.getBoolean(R.styleable.DayPickerView_canSelectBeforeDay, false);
         mIsSingleSelect = typedArray.getBoolean(R.styleable.DayPickerView_isSingleSelect, false);
-        selectedDays = new AirMonthAdapter.SelectedDays<>();
+        selectedDays = new SelectedDays<>();
         mContext = context;
         mController = datePickerController;
         isShowBooking = showBooking;
@@ -83,13 +86,13 @@ public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        final AirMonthView airMonthView = new AirMonthView(mContext, typedArray, isShowBooking, isMonthDayLabels, mBookingDates, mMaxActiveMonth, mStartYear,language);
+        final AirMonthFaView airMonthView = new AirMonthFaView(mContext, typedArray, isShowBooking, isMonthDayLabels, mBookingDates, mMaxActiveMonth, mStartYear,language);
         return new ViewHolder(airMonthView, this);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        final AirMonthView v = viewHolder.airMonthView;
+        final AirMonthFaView v = viewHolder.airMonthView;
         final HashMap<String, Integer> drawingParams = new HashMap<String, Integer>();
         int month;
         int year;
@@ -125,24 +128,24 @@ public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.Vi
         v.reuse();
 
         if (isSelected) {
-            drawingParams.put(AirMonthView.VIEW_PARAMS_SELECTED_BEGIN_YEAR, mSelectModel.getFristYear());
-            drawingParams.put(AirMonthView.VIEW_PARAMS_SELECTED_LAST_YEAR, mSelectModel.getLastYear());
-            drawingParams.put(AirMonthView.VIEW_PARAMS_SELECTED_BEGIN_MONTH, (mSelectModel.getFristMonth() - 1));
-            drawingParams.put(AirMonthView.VIEW_PARAMS_SELECTED_LAST_MONTH, (mSelectModel.getLastMonth() - 1));
-            drawingParams.put(AirMonthView.VIEW_PARAMS_SELECTED_BEGIN_DAY, mSelectModel.getFristDay());
-            drawingParams.put(AirMonthView.VIEW_PARAMS_SELECTED_LAST_DAY, mSelectModel.getLastDay());
+            drawingParams.put(AirMonthFaView.VIEW_PARAMS_SELECTED_BEGIN_YEAR, mSelectModel.getFristYear());
+            drawingParams.put(AirMonthFaView.VIEW_PARAMS_SELECTED_LAST_YEAR, mSelectModel.getLastYear());
+            drawingParams.put(AirMonthFaView.VIEW_PARAMS_SELECTED_BEGIN_MONTH, (mSelectModel.getFristMonth() - 1));
+            drawingParams.put(AirMonthFaView.VIEW_PARAMS_SELECTED_LAST_MONTH, (mSelectModel.getLastMonth() - 1));
+            drawingParams.put(AirMonthFaView.VIEW_PARAMS_SELECTED_BEGIN_DAY, mSelectModel.getFristDay());
+            drawingParams.put(AirMonthFaView.VIEW_PARAMS_SELECTED_LAST_DAY, mSelectModel.getLastDay());
         } else {
-            drawingParams.put(AirMonthView.VIEW_PARAMS_SELECTED_BEGIN_YEAR, selectedFirstYear);
-            drawingParams.put(AirMonthView.VIEW_PARAMS_SELECTED_LAST_YEAR, selectedLastYear);
-            drawingParams.put(AirMonthView.VIEW_PARAMS_SELECTED_BEGIN_MONTH, selectedFirstMonth);
-            drawingParams.put(AirMonthView.VIEW_PARAMS_SELECTED_LAST_MONTH, selectedLastMonth);
-            drawingParams.put(AirMonthView.VIEW_PARAMS_SELECTED_BEGIN_DAY, selectedFirstDay);
-            drawingParams.put(AirMonthView.VIEW_PARAMS_SELECTED_LAST_DAY, selectedLastDay);
+            drawingParams.put(AirMonthFaView.VIEW_PARAMS_SELECTED_BEGIN_YEAR, selectedFirstYear);
+            drawingParams.put(AirMonthFaView.VIEW_PARAMS_SELECTED_LAST_YEAR, selectedLastYear);
+            drawingParams.put(AirMonthFaView.VIEW_PARAMS_SELECTED_BEGIN_MONTH, selectedFirstMonth);
+            drawingParams.put(AirMonthFaView.VIEW_PARAMS_SELECTED_LAST_MONTH, selectedLastMonth);
+            drawingParams.put(AirMonthFaView.VIEW_PARAMS_SELECTED_BEGIN_DAY, selectedFirstDay);
+            drawingParams.put(AirMonthFaView.VIEW_PARAMS_SELECTED_LAST_DAY, selectedLastDay);
         }
 
-        drawingParams.put(AirMonthView.VIEW_PARAMS_YEAR, year);
-        drawingParams.put(AirMonthView.VIEW_PARAMS_MONTH, month);
-        drawingParams.put(AirMonthView.VIEW_PARAMS_WEEK_START, calendar.getFirstDayOfWeek());
+        drawingParams.put(AirMonthFaView.VIEW_PARAMS_YEAR, year);
+        drawingParams.put(AirMonthFaView.VIEW_PARAMS_MONTH, month);
+        drawingParams.put(AirMonthFaView.VIEW_PARAMS_WEEK_START, calendar.getFirstDayOfWeek());
         v.setMonthParams(drawingParams);
         v.invalidate();
     }
@@ -156,20 +159,12 @@ public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.Vi
         return (((mController.getMaxYear() - calendar.get(Calendar.YEAR))) * MONTHS_IN_YEAR);
     }
 
-    @Override
-    public void onDayClick(AirMonthView airMonthView, AirMonthAdapter.CalendarDay calendarDay) {
-        if (calendarDay != null) {
-            onDayTapped(calendarDay);
-        }
-    }
-
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        final AirMonthView airMonthView;
+        final AirMonthFaView airMonthView;
 
-        private ViewHolder(View itemView, AirMonthView.OnDayClickListener onDayClickListener) {
+        private ViewHolder(View itemView, AirMonthFaView.OnDayClickListener onDayClickListener) {
             super(itemView);
-            airMonthView = (AirMonthView) itemView;
+            airMonthView = (AirMonthFaView) itemView;
             airMonthView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             airMonthView.setClickable(true);
             airMonthView.setOnDayClickListener(onDayClickListener);
@@ -178,21 +173,21 @@ public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.Vi
 
     private void init() {
         if (typedArray.getBoolean(R.styleable.DayPickerView_currentDaySelected, false))
-            onDayTapped(new AirMonthAdapter.CalendarDay(System.currentTimeMillis()));
+            onDayTapped(new CalendarDay(System.currentTimeMillis()));
     }
 
-/*    public void onDayClick(AirMonthView airMonthView, CalendarDay calendarDay) {
+    public void onDayClick(AirMonthFaView airMonthView, CalendarDay calendarDay) {
         if (calendarDay != null) {
             onDayTapped(calendarDay);
         }
-    }*/
+    }
 
-    private void onDayTapped(AirMonthAdapter.CalendarDay calendarDay) {
+    private void onDayTapped(CalendarDay calendarDay) {
         mController.onDayOfMonthSelected(calendarDay.year, calendarDay.month, calendarDay.day);
         setSelectedDay(calendarDay);
     }
 
-    private void setSelectedDay(AirMonthAdapter.CalendarDay calendarDay) {
+    private void setSelectedDay(CalendarDay calendarDay) {
 
         if (isSingleSelect) {
             selectedDays.setFirst(calendarDay);
@@ -201,12 +196,12 @@ public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.Vi
             if (!mIsSingleSelect && selectedDays.getFirst() != null && selectedDays.getLast() == null) {
                 selectedDays.setLast(calendarDay);
 
-                AirMonthAdapter.CalendarDay firstDays = selectedDays.getFirst();
+                CalendarDay firstDays = selectedDays.getFirst();
                 int selectedFirstDay = firstDays.day;
                 int selectedFirstMonth = firstDays.month;
                 int selectedFirstYear = firstDays.year;
 
-                AirMonthAdapter.CalendarDay lastDays = selectedDays.getLast();
+                CalendarDay lastDays = selectedDays.getLast();
                 int selectedLastDay = lastDays.day;
                 int selectedLastMonth = lastDays.month;
                 int selectedLastYear = lastDays.year;
@@ -306,7 +301,7 @@ public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.Vi
     }
 
 
-    public AirMonthAdapter.SelectedDays<AirMonthAdapter.CalendarDay> getSelectedDays() {
+    public SelectedDays<CalendarDay> getSelectedDays() {
         return selectedDays;
     }
 
