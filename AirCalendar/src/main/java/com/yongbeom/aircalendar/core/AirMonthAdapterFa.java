@@ -180,7 +180,7 @@ public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.Vi
 
     private void init() {
         if (typedArray.getBoolean(R.styleable.DayPickerView_currentDaySelected, false))
-            onDayTapped(new CalendarDay(System.currentTimeMillis()));
+            onDayTapped(new CalendarDay(System.currentTimeMillis(),language));
     }
 
     public void onDayClick(AirMonthFaView airMonthView, CalendarDay calendarDay) {

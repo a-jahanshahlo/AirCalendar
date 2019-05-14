@@ -405,23 +405,24 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
     public void onDateRangeSelected(SelectedDays<CalendarDay> selectedDays) {
 
         try {
+            PersianCalendar pc=new PersianCalendar();
             Calendar cl = Calendar.getInstance();
 
-            cl.setTimeInMillis(selectedDays.getFirst().getDate().getTime());
+            cl.setTimeInMillis(selectedDays.getFirst().getDate(language).getTime());
 
             // 월
-            int start_month_int = (cl.get(Calendar.MONTH) + 1);
+            int start_month_int =language== AirCalendarIntent.Language.FA ? ((PersianCalendar)cl).getPersianMonth()+1:(cl.get(Calendar.MONTH) + 1);
             String start_month_str = String.format("%02d", start_month_int);
 
             // 일
-            int start_day_int = cl.get(Calendar.DAY_OF_MONTH);
+            int start_day_int =language== AirCalendarIntent.Language.FA ? ((PersianCalendar)cl).getPersianDayOfWeek(): cl.get(Calendar.DAY_OF_MONTH);
             String start_day_str = String.format("%02d", start_day_int);
 
             String startSetDate = cl.get(Calendar.YEAR) + start_month_str + start_day_str;
             String startDateDay = AirCalendarUtils.getDateDay(this, startSetDate, "yyyyMMdd", firstDayOfWeek);
             String startDate = cl.get(Calendar.YEAR) + "-" + start_month_str + "-" + start_day_str;
 
-            cl.setTimeInMillis(selectedDays.getLast().getDate().getTime());
+            cl.setTimeInMillis(selectedDays.getLast().getDate(language).getTime());
 
             // 월
             int end_month_int = (cl.get(Calendar.MONTH) + 1);
@@ -433,7 +434,7 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
 
             String endSetDate = cl.get(Calendar.YEAR) + end_month_str + end_day_str;
             String endDateDay = AirCalendarUtils.getDateDay(this, endSetDate, "yyyyMMdd", firstDayOfWeek);
-            String endDate = cl.get(Calendar.YEAR) + "-" + end_month_str + "-" + end_day_str;
+            String endDate =(language== AirCalendarIntent.Language.FA ? ((PersianCalendar)cl).getPersianYear() : cl.get(Calendar.YEAR)) + "-" + end_month_str + "-" + end_day_str;
 
             tv_start_date.setText(startDate + " " + startDateDay);
             tv_start_date.setTextColor(0xff4a4a4a);

@@ -473,15 +473,15 @@ public class AirMonthFaView extends View {
                 }
             }
 
-            if ((mMonth + 1) == 2) {
+/*            if ((mMonth + 1) == 2) {
                 if (day == 29) {
                     Log.d(TAG, "## Duplicate!");
                 } else {
                     canvas.drawText(String.format("%d", day), x, y, mMonthNumPaint);
                 }
-            } else {
+            } else {*/
                 canvas.drawText(String.format("%d", day), x, y, mMonthNumPaint);
-            }
+         //   }
 
             dayOffset++;
             if (dayOffset == mNumDays) {
@@ -503,7 +503,7 @@ public class AirMonthFaView extends View {
         canvas.drawRoundRect(rectF, 0.0f, 0.0f, mSelectedIntervalPaint);
 
     }
-
+// انتخاب روز در ماه
     public CalendarDay getDayFromLocation(float x, float y) {
 
         int padding = mPadding;
@@ -512,6 +512,7 @@ public class AirMonthFaView extends View {
         }
 
         int yDay = (int) (y - MONTH_HEADER_SIZE) / mRowHeight;
+       // calculate selected date
         int day = 1 + ((int) ((x - padding) * mNumDays / (mWidth - padding - mPadding)) - findDayOffset()) + yDay * mNumDays;
 
         if (mMonth > 11 || mMonth < 0 || CalendarUtils.getDaysInMonth(mMonth, mYear, language) < day || day < 1)

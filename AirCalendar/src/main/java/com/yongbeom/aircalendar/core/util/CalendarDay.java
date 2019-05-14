@@ -1,5 +1,7 @@
 package com.yongbeom.aircalendar.core.util;
 
+import com.yongbeom.aircalendar.core.AirCalendarIntent;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,25 +14,41 @@ public  class CalendarDay implements Serializable {
     public int month;
     public int year;
 
-    public CalendarDay() {
-        setTime(System.currentTimeMillis());
+    public CalendarDay(AirCalendarIntent.Language language) {
+        setTime(System.currentTimeMillis(),language);
     }
 
     public CalendarDay(int year, int month, int day) {
         setDay(year, month, day);
     }
 
-    public CalendarDay(long timeInMillis) {
-        setTime(timeInMillis);
+    public CalendarDay(long timeInMillis, AirCalendarIntent.Language language) {
+        setTime(timeInMillis,language);
     }
 
-    public CalendarDay(Calendar calendar) {
+    public CalendarDay(Calendar calendar, AirCalendarIntent.Language language) {
+        if (language== AirCalendarIntent.Language.FA){
+            PersianCalendar persianCalendar = (PersianCalendar) calendar;
+            year=persianCalendar.getPersianYear();
+            month=persianCalendar.getPersianMonth();
+            day=persianCalendar.getPersianDay();
+        }
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
     }
 
-    private void setTime(long timeInMillis) {
+    private void setTime(long timeInMillis, AirCalendarIntent.Language language) {
+        if (language== AirCalendarIntent.Language.FA){
+            if (calendar == null) {
+                calendar = new PersianCalendar();
+            }
+            calendar.setTimeInMillis(timeInMillis);
+            month =((PersianCalendar) this.calendar).getPersianMonth();
+            year = ((PersianCalendar)this.calendar).getPersianYear();
+            day = ((PersianCalendar)this.calendar).getPersianDay();
+
+        }
         if (calendar == null) {
             calendar = Calendar.getInstance();
         }
@@ -52,7 +70,15 @@ public  class CalendarDay implements Serializable {
         this.day = day;
     }
 
-    public Date getDate() {
+    public Date getDate( AirCalendarIntent.Language language) {
+        if (language== AirCalendarIntent.Language.FA){
+            if (calendar == null) {
+                calendar = new PersianCalendar();
+            }
+            ((PersianCalendar) this.calendar).setPersianDate(year, month, day);
+            return calendar.getTime();
+
+        }
         if (calendar == null) {
             calendar = Calendar.getInstance();
         }

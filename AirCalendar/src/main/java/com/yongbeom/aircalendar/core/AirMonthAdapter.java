@@ -197,7 +197,7 @@ public class AirMonthAdapter extends RecyclerView.Adapter<AirMonthAdapter.ViewHo
 
     private void init() {
         if (typedArray.getBoolean(R.styleable.DayPickerView_currentDaySelected, false))
-            onDayTapped(new CalendarDay(System.currentTimeMillis()));
+            onDayTapped(new CalendarDay(System.currentTimeMillis(),language));
     }
 
     public void onDayClick(AirMonthView airMonthView, CalendarDay calendarDay) {

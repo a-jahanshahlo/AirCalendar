@@ -3,6 +3,7 @@ package com.yongbeom.aircalendar.core.util;
 import com.yongbeom.aircalendar.core.AirCalendarIntent;
 
 import java.util.Calendar;
+import java.util.Date;
 
 public class PersianCalendarUtils {
     public static long persianToJulian(long year, int month, int day) {
@@ -34,5 +35,15 @@ public class PersianCalendarUtils {
     }
     public static Calendar getCalendar(AirCalendarIntent.Language language){
         return language== AirCalendarIntent.Language.FA? new PersianCalendar():Calendar.getInstance();
+    }
+    public static Date parsePersianDate(String persianDate){
+    String year=   persianDate.substring(0,4);
+        String month=   persianDate.substring(4,6);
+        String day=   persianDate.substring(6,8);
+        PersianCalendar p=  new PersianCalendar();
+
+       p.setPersianDate(Integer.parseInt(year),Integer.parseInt(month),Integer.parseInt(day));
+
+        return  p.getTime();
     }
 }

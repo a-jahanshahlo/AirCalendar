@@ -104,11 +104,12 @@ public class AirCalendarUtils {
     public static String getDateDay(Context context, String date, String dateType, int weekStart) throws Exception {
         String day = "" ;
         SimpleDateFormat dateFormat = new SimpleDateFormat(dateType) ;
-        Date nDate = dateFormat.parse(date) ;
-        Calendar cal = Calendar.getInstance() ;
+        Date nDate =PersianCalendarUtils.parsePersianDate(date) ;//dateFormat.parse(date) ;
+        Calendar cal =airCalendarLanguage== AirCalendarIntent.Language.FA?new PersianCalendar(): Calendar.getInstance() ;
+
         cal.setFirstDayOfWeek(weekStart);
         cal.setTime(nDate);
-        int dayNum = cal.get(Calendar.DAY_OF_WEEK);
+        int dayNum =airCalendarLanguage== AirCalendarIntent.Language.FA ? ((PersianCalendar)cal).getPersianDayOfWeek(): cal.get(Calendar.DAY_OF_WEEK);
         if (dayNum == 1) {
             dayNum = 6;
         } else {
