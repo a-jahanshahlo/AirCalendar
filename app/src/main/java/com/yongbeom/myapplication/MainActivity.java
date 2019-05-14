@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.yongbeom.aircalendar.AirCalendarDatePickerActivity;
 import com.yongbeom.aircalendar.core.AirCalendarIntent;
+import com.yongbeom.aircalendar.core.util.PersianCalendar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         intent.setSelectButtonText("Select");
         intent.setResetBtnText("Reset");
-        intent.setWeekStart(Calendar.SATURDAY);
+        intent.setWeekStart((new PersianCalendar()).getPersianFirstDayOfWeek());
         intent.setWeekDaysLanguage(AirCalendarIntent.Language.FA);
         intent.putExtra(AirCalendarDatePickerActivity.WEEK_LANGUAGE,AirCalendarIntent.Language.FA.toString());
 //        ArrayList<String> weekDay = new ArrayList<>();

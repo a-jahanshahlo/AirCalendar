@@ -16,6 +16,7 @@ import android.view.View;
 import com.yongbeom.aircalendar.R;
 import com.yongbeom.aircalendar.core.util.AirCalendarUtils;
 import com.yongbeom.aircalendar.core.util.CalendarDay;
+import com.yongbeom.aircalendar.core.util.PersianCalendar;
 import com.yongbeom.aircalendar.core.util.PersianCalendarUtils;
 
 import org.joda.time.DateTime;
@@ -103,8 +104,8 @@ public class AirMonthFaView extends View {
     protected int mStartYear = -1;
     final Time today;
 
-    private final Calendar mCalendar;
-    private final Calendar mDayLabelCalendar;
+    private final PersianCalendar mCalendar;
+    private final PersianCalendar mDayLabelCalendar;
     private final Boolean isPrevDayEnabled;
     private int mNumRows = DEFAULT_NUM_ROWS;
     private String[] mWeekLabels;
@@ -126,8 +127,8 @@ public class AirMonthFaView extends View {
         mStartYear = startYear;
         this.language = language;
         Resources resources = context.getResources();
-        mDayLabelCalendar = PersianCalendarUtils.getCalendar(language)  ;
-        mCalendar = PersianCalendarUtils.getCalendar(language)  ;
+        mDayLabelCalendar = new PersianCalendar();// PersianCalendarUtils.getCalendar(language)  ;
+        mCalendar = new PersianCalendar();// PersianCalendarUtils.getCalendar(language)  ;
         today = new Time(Time.getCurrentTimezone());
         today.setToNow();
         mDayOfWeekTypeface = resources.getString(R.string.sans_serif);
@@ -143,8 +144,9 @@ public class AirMonthFaView extends View {
         mWeekDayLineColor = typedArray.getColor(R.styleable.DayPickerView_colorWeekDayLineColor, resources.getColor(R.color.colorWeekDayLineColor));
         mWeekEndColor = typedArray.getColor(R.styleable.DayPickerView_colorWeekEndColor, resources.getColor(R.color.colorWeekEndColor));
 
-        mMonthPlus3 = (today.month) + 3;
-
+        // به دست اوردن 3 ماه آینده
+        mMonthPlus3 = (new PersianCalendar()).getPersianMonth() + 3;
+        //mMonthPlus3 = (today.month)  + 3;
         mDrawRect = typedArray.getBoolean(R.styleable.DayPickerView_drawRoundRect, false);
 
         mStringBuilder = new StringBuilder(50);
@@ -161,7 +163,7 @@ public class AirMonthFaView extends View {
 
         isPrevDayEnabled = typedArray.getBoolean(R.styleable.DayPickerView_enablePreviousDay, true);
 
-        mWeekLabels = getResources().getStringArray(R.array.label_calender_week);
+        mWeekLabels = getResources().getStringArray(R.array.label_calendar_fa);
 
         initView();
 
@@ -187,8 +189,13 @@ public class AirMonthFaView extends View {
         for (int i = 0; i < mNumDays; i++) {
             int calendarDay = (i + mWeekStart) % mNumDays;
             int x = (2 * i + 1) * dayWidthHalf + mPadding;
+            // مققدار دهی شود چه روز از هفته هستیم
             mDayLabelCalendar.set(Calendar.DAY_OF_WEEK, calendarDay);
-            canvas.drawText(mWeekLabels[mDayLabelCalendar.get(Calendar.DAY_OF_WEEK)].toUpperCase(Locale.getDefault()), x, y, mMonthDayLabelPaint);
+
+            //  String s = mWeekLabels[mDayLabelCalendar.get(Calendar.DAY_OF_WEEK)].toUpperCase(Locale.getDefault());
+
+            String s = mWeekLabels[mDayLabelCalendar.getPersianDayOfWeek()];
+            canvas.drawText(s, x, y, mMonthDayLabelPaint);
         }
         canvas.drawLine(0, y + (MONTH_DAY_LABEL_TEXT_SIZE / 2), mWidth, y + (MONTH_DAY_LABEL_TEXT_SIZE / 2), mWeekDayLinePaint);
     }
@@ -198,6 +205,7 @@ public class AirMonthFaView extends View {
      *
      * @param canvas
      */
+    // برای نمایش عنوان ماه جاری در تقویم
     private void drawMonthTitle(Canvas canvas) {
 //        int x = (mWidth + 2 * mPadding) / 2;
         int x = mWidth / 13;
@@ -214,6 +222,9 @@ public class AirMonthFaView extends View {
     }
 
     private String getMonthAndYearString() {
+        if (language == AirCalendarIntent.Language.FA) {
+            return String.format("%s %s", mCalendar.getPersianYear(), mCalendar.getPersianMonthName());
+        }
         int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_NO_MONTH_DAY;
         mStringBuilder.setLength(0);
 
@@ -305,16 +316,19 @@ public class AirMonthFaView extends View {
         return ((mYear < time.year)) || (mYear == time.year && mMonth < time.month) || (mMonth == time.month && monthDay < time.monthDay);
     }
 
-    /**تابع مهم
+    /**
+     * تابع مهم
+     *
      * @param canvas
      */
+    //رسم روز های ماه
     protected void drawMonthNums(Canvas canvas) {
         int y = (mRowHeight + MINI_DAY_NUMBER_TEXT_SIZE) / 2 - DAY_SEPARATOR_WIDTH + MONTH_HEADER_SIZE;
         int paddingDay = (mWidth - 2 * mPadding) / (2 * mNumDays);
         int dayOffset = findDayOffset();
         int day = 1;
         int bgw = mWidth / mNumDays;
-
+// تا زمانیکه day کوچکتر از تعداد روز ماه 31 باشد
         while (day <= mNumCells) {
 
             int x = paddingDay * (1 + dayOffset * 2) + mPadding;
@@ -490,7 +504,7 @@ public class AirMonthFaView extends View {
 
     }
 
-    public  CalendarDay getDayFromLocation(float x, float y) {
+    public CalendarDay getDayFromLocation(float x, float y) {
 
         int padding = mPadding;
         if ((x < padding) || (x > mWidth - mPadding)) {
@@ -500,10 +514,10 @@ public class AirMonthFaView extends View {
         int yDay = (int) (y - MONTH_HEADER_SIZE) / mRowHeight;
         int day = 1 + ((int) ((x - padding) * mNumDays / (mWidth - padding - mPadding)) - findDayOffset()) + yDay * mNumDays;
 
-        if (mMonth > 11 || mMonth < 0 || CalendarUtils.getDaysInMonth(mMonth, mYear,language) < day || day < 1)
+        if (mMonth > 11 || mMonth < 0 || CalendarUtils.getDaysInMonth(mMonth, mYear, language) < day || day < 1)
             return null;
 
-        return new  CalendarDay(mYear, mMonth, day);
+        return new CalendarDay(mYear, mMonth, day);
     }
 
     protected void initView() {
@@ -567,6 +581,7 @@ public class AirMonthFaView extends View {
         drawMonthNums(canvas);
     }
 
+    // محاسبه ارتفاق ویو ماه
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), mRowHeight * mNumRows + MONTH_HEADER_SIZE);
     }
@@ -577,7 +592,7 @@ public class AirMonthFaView extends View {
 
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
-             CalendarDay calendarDay = getDayFromLocation(event.getX(), event.getY());
+            CalendarDay calendarDay = getDayFromLocation(event.getX(), event.getY());
             if (calendarDay != null) {
                 onDayClick(calendarDay);
             }
@@ -586,6 +601,7 @@ public class AirMonthFaView extends View {
     }
 
     public void reuse() {
+        // تعداد سطر های هفته در ماه بصورت پیش فرض 6
         mNumRows = DEFAULT_NUM_ROWS;
         requestLayout();
     }
@@ -627,23 +643,26 @@ public class AirMonthFaView extends View {
         mHasToday = false;
         mToday = -1;
 
-        mCalendar.set(Calendar.MONTH, mMonth);
+        mCalendar.setPersianDate(mCalendar.getPersianYear(), mCalendar.getPersianMonth(), mCalendar.getPersianDay());
+        mDayOfWeekStart = mCalendar.getPersianDayOfWeek();
+  /*      mCalendar.set(Calendar.MONTH, mMonth);
         mCalendar.set(Calendar.YEAR, mYear);
         mCalendar.set(Calendar.DAY_OF_MONTH, 1);
-        mDayOfWeekStart = mCalendar.get(Calendar.DAY_OF_WEEK);
+        mDayOfWeekStart = mCalendar.get(Calendar.DAY_OF_WEEK);*/
 
         if (params.containsKey(VIEW_PARAMS_WEEK_START)) {
             mWeekStart = params.get(VIEW_PARAMS_WEEK_START);
         } else {
             int weekStart = params.get(VIEW_PARAMS_WEEK_START);
             try {
-                weekStart = mCalendar.getFirstDayOfWeek();
+                weekStart = mCalendar.getPersianFirstDayOfWeek();
+                //  weekStart = mCalendar.getFirstDayOfWeek();
             } catch (RuntimeException e) {
             }
             mWeekStart = weekStart;
         }
 
-        mNumCells = CalendarUtils.getDaysInMonth(mMonth, mYear,language);
+        mNumCells = CalendarUtils.getDaysInMonth(mMonth, mYear, language);
         for (int i = 0; i < mNumCells; i++) {
             final int day = i + 1;
             if (sameDay(day, today)) {
@@ -662,7 +681,7 @@ public class AirMonthFaView extends View {
     }
 
     public static abstract interface OnDayClickListener {
-        public abstract void onDayClick(AirMonthFaView airMonthView,  CalendarDay calendarDay);
+        public abstract void onDayClick(AirMonthFaView airMonthView, CalendarDay calendarDay);
 
     }
 

@@ -40,27 +40,29 @@ public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.Vi
     private SelectModel mSelectModel;
     private ArrayList<String> mBookingDates;
     private AirCalendarIntent.Language language;
+
     public AirMonthAdapterFa(Context context,
                              DatePickerController datePickerController,
-                           TypedArray typedArray,
-                           boolean showBooking,
-                           boolean monthDayLabels,
-                           boolean isSingle, ArrayList<String> bookingDates,
-                           SelectModel selectedDay,
-                           int maxActiveMonth,
-                           int startYear,
-                           int firstDayOfWeek,
-                           AirCalendarIntent.Language language
+                             TypedArray typedArray,
+                             boolean showBooking,
+                             boolean monthDayLabels,
+                             boolean isSingle, ArrayList<String> bookingDates,
+                             SelectModel selectedDay,
+                             int maxActiveMonth,
+                             int startYear,
+                             int firstDayOfWeek,
+                             AirCalendarIntent.Language language
     ) {
-        this.language=language;
+        this.language = language;
         this.typedArray = typedArray;
-       // (new PersianCalendar()).getPersianMonth();
-        calendar = new PersianCalendar() ;
+        // (new PersianCalendar()).getPersianMonth();
+        calendar = new PersianCalendar();
         calendar.setFirstDayOfWeek(firstDayOfWeek);
 // what is this -> first = 4 last =3
-
-        firstMonth = typedArray.getInt(R.styleable.DayPickerView_firstMonth,calendar.getPersianMonth()-1);
-        lastMonth = typedArray.getInt(R.styleable.DayPickerView_lastMonth, (calendar.getPersianMonth() - 2) % MONTHS_IN_YEAR);
+// به دست آوردن ماه کنونی تا 12 ماه آینده
+        int persianMonth = calendar.getPersianMonth();
+        firstMonth = typedArray.getInt(R.styleable.DayPickerView_firstMonth, persianMonth);
+        lastMonth = typedArray.getInt(R.styleable.DayPickerView_lastMonth, (persianMonth - 1) % MONTHS_IN_YEAR);
 
         mCanSelectBeforeDay = typedArray.getBoolean(R.styleable.DayPickerView_canSelectBeforeDay, false);
         mIsSingleSelect = typedArray.getBoolean(R.styleable.DayPickerView_isSingleSelect, false);
@@ -86,7 +88,7 @@ public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        final AirMonthFaView airMonthView = new AirMonthFaView(mContext, typedArray, isShowBooking, isMonthDayLabels, mBookingDates, mMaxActiveMonth, mStartYear,language);
+        final AirMonthFaView airMonthView = new AirMonthFaView(mContext, typedArray, isShowBooking, isMonthDayLabels, mBookingDates, mMaxActiveMonth, mStartYear, language);
         return new ViewHolder(airMonthView, this);
     }
 
@@ -97,11 +99,13 @@ public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.Vi
         int month;
         int year;
         //دزیافت سال شروع
-        int startYear = calendar.get(Calendar.YEAR);
+        int startYear =calendar.getPersianYear();// calendar.get(Calendar.YEAR);
         if (mStartYear != -1) {
             startYear = mStartYear;
         }
+        // به دست اوردن ماه زمانیکه تقویم اسکرول می شود به پایین مثلا ماه 6 هستیم
         month = (firstMonth + (position % MONTHS_IN_YEAR)) % MONTHS_IN_YEAR;
+        // به دست اوردم سال
         year = position / MONTHS_IN_YEAR + startYear + ((firstMonth + (position % MONTHS_IN_YEAR)) / MONTHS_IN_YEAR);
 
         int selectedFirstDay = -1;
@@ -145,7 +149,8 @@ public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.Vi
 
         drawingParams.put(AirMonthFaView.VIEW_PARAMS_YEAR, year);
         drawingParams.put(AirMonthFaView.VIEW_PARAMS_MONTH, month);
-        drawingParams.put(AirMonthFaView.VIEW_PARAMS_WEEK_START, calendar.getFirstDayOfWeek());
+       // drawingParams.put(AirMonthFaView.VIEW_PARAMS_WEEK_START, calendar.getFirstDayOfWeek());
+        drawingParams.put(AirMonthFaView.VIEW_PARAMS_WEEK_START,calendar.getPersianFirstDayOfWeek());
         v.setMonthParams(drawingParams);
         v.invalidate();
     }
@@ -156,7 +161,9 @@ public class AirMonthAdapterFa extends RecyclerView.Adapter<AirMonthAdapterFa.Vi
 
     @Override
     public int getItemCount() {
-        return (((mController.getMaxYear() - calendar.get(Calendar.YEAR))) * MONTHS_IN_YEAR);
+
+        int result = ((mController.getMaxYear() - calendar.getPersianYear() )) * MONTHS_IN_YEAR;
+        return result;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

@@ -104,7 +104,28 @@ public class PersianCalendar extends GregorianCalendar {
                 return PersianCalendarConstants.persianWeekDays[6];
         }
     }
-
+    public int getPersianFirstDayOfWeek(){
+        return 7;
+    }
+    public int getPersianDayOfWeek() {
+        // بدست اوردن اینکه چندمین روز هفته هستیم
+        switch (get(DAY_OF_WEEK)) {
+            case SATURDAY:
+                return 1;
+            case SUNDAY:
+                return 2;
+            case MONDAY:
+                return 3;
+            case TUESDAY:
+                return 4;
+            case WEDNESDAY:
+                return 5;
+            case THURSDAY:
+                return 6;
+            default:
+                return 7;
+        }
+    }
     public String getPersianLongDate() {
         return getPersianWeekDayName() + "  " + this.persianDay + "  " + getPersianMonthName() + "  " + this.persianYear;
     }

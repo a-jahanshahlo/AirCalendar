@@ -41,6 +41,7 @@ import com.yongbeom.aircalendar.core.DayPickerView;
 import com.yongbeom.aircalendar.core.SelectModel;
 import com.yongbeom.aircalendar.core.util.AirCalendarUtils;
 import com.yongbeom.aircalendar.core.util.CalendarDay;
+import com.yongbeom.aircalendar.core.util.PersianCalendar;
 import com.yongbeom.aircalendar.core.util.SelectedDays;
 
 import org.joda.time.DateTime;
@@ -222,7 +223,7 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
             }
         }
 
-        firstDayOfWeek = getIntent().getIntExtra(WEEK_START, Calendar.SUNDAY);
+        firstDayOfWeek = getIntent().getIntExtra(WEEK_START, Calendar.SATURDAY);
 
         if (weekDays.isEmpty()) {
             throw new RuntimeException("Language not supported or non existent");
@@ -281,12 +282,19 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
         if (maxYear != -1 && maxYear > Integer.parseInt(new DateTime().toString("yyyy"))) {
             BASE_YEAR = maxYear;
         } else {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy", Locale.US);
-            Date currentTime = new Date();
-            String dTime = formatter.format(currentTime);
-
+// مهم بررسی میشود که در چه سالی هستیم و چند سال اینده باید رندر شود
+            if (language == AirCalendarIntent.Language.FA) {
+                BASE_YEAR = (new PersianCalendar()).getPersianYear() + 2;
+            } else {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy", Locale.US);
+                Date currentTime = new Date();
+                String dTime = formatter.format(currentTime);
+                // default : now year + 2 year
+                BASE_YEAR = Integer.valueOf(dTime) + 2;
+            }
             // default : now year + 2 year
-            BASE_YEAR = Integer.valueOf(dTime) + 2;
+            // BASE_YEAR = Integer.valueOf(dTime) + 2;
+
         }
 // بررسی میشود که آیا تاریخی برای نمایش انتخاب شده است
         if (dates != null && dates.size() != 0 && isBooking) {
