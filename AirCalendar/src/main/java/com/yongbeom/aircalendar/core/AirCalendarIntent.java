@@ -81,7 +81,18 @@ public class AirCalendarIntent  extends Intent implements Parcelable {
     public void isSingleSelect(boolean isSingle) {
         this.putExtra(AirCalendarDatePickerActivity.EXTRA_IS_SINGLE_SELECT, isSingle);
     }
-
+    /**
+     * Sets the select button text
+     */
+    public void setStartText(String txt) {
+        this.putExtra(AirCalendarDatePickerActivity.START_DATE_TEXT, txt);
+    }
+    /**
+     * Sets the select button text
+     */
+    public void setEndText(String txt) {
+        this.putExtra(AirCalendarDatePickerActivity.END_DATE_TEXT, txt);
+    }
     /**
      * Sets the select button text
      */

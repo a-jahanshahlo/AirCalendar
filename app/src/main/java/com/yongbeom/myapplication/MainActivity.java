@@ -2,8 +2,10 @@ package com.yongbeom.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -28,12 +30,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         AirCalendarIntent intent = new AirCalendarIntent(this);
-
+        intent.setStartText("شروع");
+        intent.setEndText("پایان");
         intent.setSelectButtonText("Select");
         intent.setResetBtnText("Reset");
         intent.setWeekStart((new PersianCalendar()).getPersianFirstDayOfWeek());
         intent.setWeekDaysLanguage(AirCalendarIntent.Language.FA);
-        intent.putExtra(AirCalendarDatePickerActivity.WEEK_LANGUAGE,AirCalendarIntent.Language.FA.toString());
+        intent.putExtra(AirCalendarDatePickerActivity.WEEK_LANGUAGE, AirCalendarIntent.Language.FA.toString());
 //        ArrayList<String> weekDay = new ArrayList<>();
 //        weekDay.add("M");
 //        weekDay.add("T");
@@ -71,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 //            AirCalendarDatePickerActivity.RESULT_TYPE
 //            AirCalendarDatePickerActivity.RESULT_STATE
 
-            if(data != null){
+            if (data != null) {
                 Toast.makeText(this, "Select Date range : " + data.getStringExtra(AirCalendarDatePickerActivity.RESULT_SELECT_START_DATE) + " ~ " + data.getStringExtra(AirCalendarDatePickerActivity.RESULT_SELECT_END_DATE), Toast.LENGTH_SHORT).show();
             }
         }

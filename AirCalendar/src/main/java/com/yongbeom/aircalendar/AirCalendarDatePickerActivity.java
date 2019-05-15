@@ -74,7 +74,8 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
     public final static String EXTRA_ACTIVE_MONTH_NUM = "ACTIVE_MONTH_NUMBER";
     public final static String EXTRA_MAX_YEAR = "MAX_YEAR";
     public final static String EXTRA_START_YEAR = "START_YEAR";
-
+    public final static String START_DATE_TEXT = "START_DATE_TEXT";
+    public final static String END_DATE_TEXT = "END_DATE_TEXT";
     public final static String SELECT_TEXT = "SELECT_TEXT";
     public final static String RESET_TEXT = "RESET_TEXT";
     public final static String CUSTOM_WEEK_ABREVIATIONS = "CUSTOM_WEEK_ABREVIATIONS";
@@ -103,6 +104,8 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
     private TextView tv_day_five;
     private TextView tv_day_six;
     private TextView tv_day_seven;
+    private TextView tv_start_text;
+    private TextView tv_end_text;
 
     private RelativeLayout rl_popup_select_checkout_info_ok;
     private RelativeLayout rl_checkout_select_info_popup;
@@ -198,7 +201,15 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
         tv_day_five = findViewById(R.id.tv_day_five);
         tv_day_six = findViewById(R.id.tv_day_six);
         tv_day_seven = findViewById(R.id.tv_day_seven);
+        tv_start_text = findViewById(R.id.tv_start_text);
+        tv_end_text = findViewById(R.id.tv_end_text);
 
+        if (getIntent().hasExtra(START_DATE_TEXT)) {
+            tv_start_text.setText(getIntent().getStringExtra(START_DATE_TEXT));
+        }
+        if (getIntent().hasExtra(END_DATE_TEXT)) {
+            tv_end_text.setText(getIntent().getStringExtra(END_DATE_TEXT));
+        }
         if (getIntent().hasExtra(SELECT_TEXT)) {
             tv_done_btn.setText(getIntent().getStringExtra(SELECT_TEXT));
         }
