@@ -102,19 +102,25 @@ public class AirCalendarUtils {
      * @throws Exception
      */
     public static String getDateDay(Context context, String date, String dateType, int weekStart) throws Exception {
-        String day = "" ;
-        SimpleDateFormat dateFormat = new SimpleDateFormat(dateType) ;
-        Date nDate =PersianCalendarUtils.parsePersianDate(date) ;//dateFormat.parse(date) ;
-        Calendar cal =airCalendarLanguage== AirCalendarIntent.Language.FA?new PersianCalendar(): Calendar.getInstance() ;
+        String day = "";
+        SimpleDateFormat dateFormat = new SimpleDateFormat(dateType);
+        Date nDate = PersianCalendarUtils.parsePersianDate(date);//dateFormat.parse(date) ;
+        Calendar cal = airCalendarLanguage == AirCalendarIntent.Language.FA ? new PersianCalendar() : Calendar.getInstance();
 
         cal.setFirstDayOfWeek(weekStart);
         cal.setTime(nDate);
-        int dayNum =airCalendarLanguage== AirCalendarIntent.Language.FA ? ((PersianCalendar)cal).getPersianDayOfWeek(): cal.get(Calendar.DAY_OF_WEEK);
-        if (dayNum == 1) {
-            dayNum = 6;
+        int dayNum = -1;
+        if (airCalendarLanguage == AirCalendarIntent.Language.FA) {
+            dayNum = ((PersianCalendar) cal).getPersianDayOfWeek();
         } else {
-            dayNum-=2;
+            dayNum = cal.get(Calendar.DAY_OF_WEEK);
+            if (dayNum == 1) {
+                dayNum = 6;
+            } else {
+                dayNum -= 2;
+            }
         }
+
 
         if (airCalendarWeekdays.isEmpty()) {
             switch (airCalendarLanguage) {
@@ -128,11 +134,11 @@ public class AirCalendarUtils {
                     break;
                 case FA:
                     String[] weekdaysFa = context.getResources().getStringArray(R.array.label_calendar_fa);
-                    day = weekdaysFa[dayNum];
+                    day = weekdaysFa[dayNum -1];
                     break;
             }
-            return day ;
-        } else {
+            return day;
+        } else { //در زمان کد نویسی اگر روز های هفته مشخص نشده بود
             return airCalendarWeekdays.get(dayNum);
         }
     }

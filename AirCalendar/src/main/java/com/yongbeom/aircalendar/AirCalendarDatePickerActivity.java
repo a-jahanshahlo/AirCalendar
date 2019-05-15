@@ -229,7 +229,7 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
             throw new RuntimeException("Language not supported or non existent");
         } else {
             // بررسی می شود که زبان فارسی است در اینصورت ترتیب چیدمان روز های هفته از شنبه باشد
-            int weekStart = (language == AirCalendarIntent.Language.FA ? firstDayOfWeek : firstDayOfWeek - 2);
+            int weekStart = (language == AirCalendarIntent.Language.FA ? firstDayOfWeek - 1 : firstDayOfWeek - 2);
 
             for (int week = 0; week < 7; week++) {
                 int weekDay = weekStart + week;
@@ -405,36 +405,43 @@ public class AirCalendarDatePickerActivity extends AppCompatActivity implements 
     public void onDateRangeSelected(SelectedDays<CalendarDay> selectedDays) {
 
         try {
-            PersianCalendar pc=new PersianCalendar();
-            Calendar cl = Calendar.getInstance();
+
+            Calendar cl = language == AirCalendarIntent.Language.FA ? new PersianCalendar() : Calendar.getInstance();
 
             cl.setTimeInMillis(selectedDays.getFirst().getDate(language).getTime());
 
             // 월
-            int start_month_int =language== AirCalendarIntent.Language.FA ? ((PersianCalendar)cl).getPersianMonth()+1:(cl.get(Calendar.MONTH) + 1);
+            int start_month_int = language == AirCalendarIntent.Language.FA ? ((PersianCalendar) cl).getPersianMonth() + 1 : (cl.get(Calendar.MONTH) + 1);
             String start_month_str = String.format("%02d", start_month_int);
 
             // 일
-            int start_day_int =language== AirCalendarIntent.Language.FA ? ((PersianCalendar)cl).getPersianDayOfWeek(): cl.get(Calendar.DAY_OF_MONTH);
+            int start_day_int = language == AirCalendarIntent.Language.FA ? ((PersianCalendar) cl).getPersianDay() : cl.get(Calendar.DAY_OF_MONTH);
             String start_day_str = String.format("%02d", start_day_int);
-
-            String startSetDate = cl.get(Calendar.YEAR) + start_month_str + start_day_str;
+            String y = String.format("%d", language == AirCalendarIntent.Language.FA ? ((PersianCalendar) cl).getPersianYear() : cl.get(Calendar.YEAR));
+            String startSetDate = y + start_month_str + start_day_str;
             String startDateDay = AirCalendarUtils.getDateDay(this, startSetDate, "yyyyMMdd", firstDayOfWeek);
-            String startDate = cl.get(Calendar.YEAR) + "-" + start_month_str + "-" + start_day_str;
+            String startDate = "";
+            if (language == AirCalendarIntent.Language.FA) {
+                PersianCalendar pc = (PersianCalendar) cl;
+                startDate = pc.getPersianYear() + "-" + start_month_str + "-" + start_day_str;
+            } else {
+                startDate = cl.get(Calendar.YEAR) + "-" + start_month_str + "-" + start_day_str;
+            }
+
 
             cl.setTimeInMillis(selectedDays.getLast().getDate(language).getTime());
 
             // 월
-            int end_month_int = (cl.get(Calendar.MONTH) + 1);
+            int end_month_int = language == AirCalendarIntent.Language.FA ? ((PersianCalendar) cl).getPersianMonth()+1 : (cl.get(Calendar.MONTH) + 1);
             String end_month_str = String.format("%02d", end_month_int);
 
             // 일
-            int end_day_int = cl.get(Calendar.DAY_OF_MONTH);
+            int end_day_int = language == AirCalendarIntent.Language.FA ? ((PersianCalendar) cl).getPersianDay() : cl.get(Calendar.DAY_OF_MONTH);
             String end_day_str = String.format("%02d", end_day_int);
 
-            String endSetDate = cl.get(Calendar.YEAR) + end_month_str + end_day_str;
+            String endSetDate = (language == AirCalendarIntent.Language.FA ? ((PersianCalendar) cl).getPersianYear() : cl.get(Calendar.YEAR)) + end_month_str + end_day_str;
             String endDateDay = AirCalendarUtils.getDateDay(this, endSetDate, "yyyyMMdd", firstDayOfWeek);
-            String endDate =(language== AirCalendarIntent.Language.FA ? ((PersianCalendar)cl).getPersianYear() : cl.get(Calendar.YEAR)) + "-" + end_month_str + "-" + end_day_str;
+            String endDate = (language == AirCalendarIntent.Language.FA ? ((PersianCalendar) cl).getPersianYear() : cl.get(Calendar.YEAR)) + "-" + end_month_str + "-" + end_day_str;
 
             tv_start_date.setText(startDate + " " + startDateDay);
             tv_start_date.setTextColor(0xff4a4a4a);

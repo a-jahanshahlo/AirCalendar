@@ -1,18 +1,28 @@
 package com.yongbeom.aircalendar.core.util;
 
+import android.text.format.Time;
+
 import com.yongbeom.aircalendar.core.AirCalendarIntent;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 public class PersianCalendarUtils {
     public static long persianToJulian(long year, int month, int day) {
+
+        long i1 = (ceil(year - 474L, 2820D) + 474L) - 1L;
+        long i2 = (long) Math.floor((682L * (ceil(year - 474L, 2820D) + 474L) - 110L) / 2816D);
+        long i3 = PersianCalendarConstants.PERSIAN_EPOCH - 1L;
+        long i4 = (long) Math.floor((year - 474L) / 2820D);
+        int i5 = month < 7 ? 31 * month : 30 * month + 6;
         return 365L *
-                ((ceil(year - 474L, 2820D) + 474L) - 1L) +
-                ((long) Math.floor((682L * (ceil(year - 474L, 2820D) + 474L) - 110L) / 2816D)) +
-                (PersianCalendarConstants.PERSIAN_EPOCH - 1L) + 1029983L *
-                ((long) Math.floor((year - 474L) / 2820D)) +
-                (month < 7 ? 31 * month : 30 * month + 6) + day;
+                i1 +
+                i2 +
+                i3 + 1029983L *
+                i4 +
+                i5 + day;
     }
 
     public static boolean isPersianLeapYear(int persianYear) {
@@ -30,20 +40,46 @@ public class PersianCalendarUtils {
         return (year << 16) | (month << 8) | day;
     }
 
+    public static long convertToMillis(long julianDate, Calendar c) {
+        return PersianCalendarConstants.MILLIS_JULIAN_EPOCH + julianDate * PersianCalendarConstants.MILLIS_OF_A_DAY
+                + PersianCalendarUtils.ceil(c.getTimeInMillis() - PersianCalendarConstants.MILLIS_JULIAN_EPOCH, PersianCalendarConstants.MILLIS_OF_A_DAY);
+    }
+
     public static long ceil(double double1, double double2) {
         return (long) (double1 - double2 * Math.floor(double1 / double2));
     }
-    public static Calendar getCalendar(AirCalendarIntent.Language language){
-        return language== AirCalendarIntent.Language.FA? new PersianCalendar():Calendar.getInstance();
+
+    public static Calendar getCalendar(AirCalendarIntent.Language language) {
+        return language == AirCalendarIntent.Language.FA ? new PersianCalendar() : Calendar.getInstance();
     }
-    public static Date parsePersianDate(String persianDate){
-    String year=   persianDate.substring(0,4);
-        String month=   persianDate.substring(4,6);
-        String day=   persianDate.substring(6,8);
-        PersianCalendar p=  new PersianCalendar();
 
-       p.setPersianDate(Integer.parseInt(year),Integer.parseInt(month),Integer.parseInt(day));
+    public static Date parsePersianDate(String persianDate) {
+        String year = persianDate.substring(0, 4);
+        String month = persianDate.substring(4, 6);
+        String day = persianDate.substring(6, 8);
 
-        return  p.getTime();
+
+        int ye = Integer.parseInt(year);
+        int me = Integer.parseInt(month);
+        int de = Integer.parseInt(day);
+        Roozh b = new Roozh();
+        b.PersianToGregorian(ye, me, de);
+        int year1 = b.getYear();
+        int day1 = b.getDay();
+        int month1 = b.getMonth();
+        // c.setPersianDate();
+        String dts = String.format("%d/%d/%d", day1, month1, year1);
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("d/M/yyyy").parse(dts);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        //  long toJulian = PersianCalendarUtils.persianToJulian(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
+        //  Calendar c =  Calendar.getInstance();
+        //   long toJulianInMill = PersianCalendarUtils.convertToMillis(toJulian, c);
+        //  c.setTimeInMillis(toJulianInMill);
+        return date;
     }
 }

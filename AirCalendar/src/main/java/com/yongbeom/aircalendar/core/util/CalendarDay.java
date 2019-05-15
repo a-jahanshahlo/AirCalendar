@@ -79,7 +79,7 @@ public  class CalendarDay implements Serializable {
             return calendar.getTime();
 
         }
-        if (calendar == null) {
+            if (calendar == null) {
             calendar = Calendar.getInstance();
         }
         calendar.set(year, month, day);

@@ -22,12 +22,12 @@
     </string-array>
     <string-array name="label_calendar_fa">
 
-        <item name="7">ش</item>
+        <item name="1">ش</item>
         <item name="2">ی</item>
-        <item name="2">د</item>
-        <item name="3">س</item>
-        <item name="4">چ</item>
-        <item name="5">پ</item>
-        <item name="6">ج</item>
+        <item name="3">د</item>
+        <item name="4">س</item>
+        <item name="5">چ</item>
+        <item name="6">پ</item>
+        <item name="7">ج</item>
     </string-array>
 </resources>
