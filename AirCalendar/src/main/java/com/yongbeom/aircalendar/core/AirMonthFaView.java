@@ -146,7 +146,7 @@ public class AirMonthFaView extends View {
 
         // به دست اوردن 3 ماه آینده
         mMonthPlus3 = (new PersianCalendar()).getPersianMonth() + 3;
-        //mMonthPlus3 = (today.month)  + 3;
+        //  mMonthPlus3 = (today.month)  + 3;
         mDrawRect = typedArray.getBoolean(R.styleable.DayPickerView_drawRoundRect, false);
 
         mStringBuilder = new StringBuilder(50);
@@ -224,6 +224,7 @@ public class AirMonthFaView extends View {
     private String getMonthAndYearString() {
         if (language == AirCalendarIntent.Language.FA) {
             return String.format("%s %s", mCalendar.getPersianYear(), mCalendar.getPersianMonthName());
+
         }
         int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_NO_MONTH_DAY;
         mStringBuilder.setLength(0);
@@ -480,8 +481,8 @@ public class AirMonthFaView extends View {
                     canvas.drawText(String.format("%d", day), x, y, mMonthNumPaint);
                 }
             } else {*/
-                canvas.drawText(String.format("%d", day), x, y, mMonthNumPaint);
-         //   }
+            canvas.drawText(String.format("%d", day), x, y, mMonthNumPaint);
+            //   }
 
             dayOffset++;
             if (dayOffset == mNumDays) {
@@ -503,7 +504,8 @@ public class AirMonthFaView extends View {
         canvas.drawRoundRect(rectF, 0.0f, 0.0f, mSelectedIntervalPaint);
 
     }
-// انتخاب روز در ماه
+
+    // انتخاب روز در ماه
     public CalendarDay getDayFromLocation(float x, float y) {
 
         int padding = mPadding;
@@ -512,7 +514,7 @@ public class AirMonthFaView extends View {
         }
 
         int yDay = (int) (y - MONTH_HEADER_SIZE) / mRowHeight;
-       // calculate selected date
+        // calculate selected date
         int day = 1 + ((int) ((x - padding) * mNumDays / (mWidth - padding - mPadding)) - findDayOffset()) + yDay * mNumDays;
 
         if (mMonth > 11 || mMonth < 0 || CalendarUtils.getDaysInMonth(mMonth, mYear, language) < day || day < 1)
@@ -607,6 +609,7 @@ public class AirMonthFaView extends View {
         requestLayout();
     }
 
+    // این تابع شی تقویم را مدیریت می کند
     public void setMonthParams(HashMap<String, Integer> params) {
         if (!params.containsKey(VIEW_PARAMS_MONTH) && !params.containsKey(VIEW_PARAMS_YEAR)) {
             throw new InvalidParameterException("You must specify month and year for this view");
@@ -643,8 +646,8 @@ public class AirMonthFaView extends View {
 
         mHasToday = false;
         mToday = -1;
-
-        mCalendar.setPersianDate(mCalendar.getPersianYear(), mCalendar.getPersianMonth(), mCalendar.getPersianDay());
+// در این جا مقدار ماه جدید تغییر می کند
+        mCalendar.setPersianDate(mYear, mMonth, 1);
         mDayOfWeekStart = mCalendar.getPersianDayOfWeek();
   /*      mCalendar.set(Calendar.MONTH, mMonth);
         mCalendar.set(Calendar.YEAR, mYear);

@@ -105,11 +105,15 @@ public class PersianCalendar extends GregorianCalendar {
         }
     }
     public int getPersianFirstDayOfWeek(){
-        return 7;
+        return 1;
     }
     public int getPersianDayOfWeek() {
+
+    int i=   get(DAY_OF_WEEK);
+
         // بدست اوردن اینکه چندمین روز هفته هستیم
-        switch (get(DAY_OF_WEEK)) {
+      //  switch (get(DAY_OF_WEEK)) {
+        switch ( i) {
             case SATURDAY:
                 return 1;
             case SUNDAY:
