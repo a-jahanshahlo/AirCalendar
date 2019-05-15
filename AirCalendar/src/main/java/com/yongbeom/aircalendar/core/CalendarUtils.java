@@ -24,11 +24,14 @@
  ***********************************************************************************/
 package com.yongbeom.aircalendar.core;
 
+import com.yongbeom.aircalendar.core.util.PersianCalendarUtils;
+
 import java.util.Calendar;
 
 
 public class CalendarUtils {
     public static int getDaysInPersianMonth(int month, int year) {
+
         switch (month) {
             case 0:
             case 1:
@@ -45,7 +48,8 @@ public class CalendarUtils {
             case 10:
                 return 30;
             case 11:
-                return ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) ? 28 : 29;
+
+                return PersianCalendarUtils.isPersianLeapYear(year) ? 30 : 29;
             default:
                 throw new IllegalArgumentException("Invalid Month");
         }
