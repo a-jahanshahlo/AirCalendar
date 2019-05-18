@@ -1,7 +1,5 @@
-## [Persian]
-[View](http://mytalkhome.tistory.com/881)
 
-## [English]
+## [English] and [Persian]
 # AirCalendar
 Airbnb-style calendar
 
