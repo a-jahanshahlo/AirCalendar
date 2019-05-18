@@ -18,6 +18,7 @@ import com.yongbeom.aircalendar.core.util.AirCalendarUtils;
 import com.yongbeom.aircalendar.core.util.CalendarDay;
 import com.yongbeom.aircalendar.core.util.PersianCalendar;
 import com.yongbeom.aircalendar.core.util.PersianCalendarUtils;
+import com.yongbeom.aircalendar.core.util.Roozh;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -102,8 +103,8 @@ public class AirMonthFaView extends View {
     protected int mYear;
     protected int mMaxActiveMonth = -1;
     protected int mStartYear = -1;
-    final Time today;
-
+      Time mmToday;
+    Roozh mRToday;
     private final PersianCalendar mCalendar;
     private final PersianCalendar mDayLabelCalendar;
     private final Boolean isPrevDayEnabled;
@@ -129,8 +130,11 @@ public class AirMonthFaView extends View {
         Resources resources = context.getResources();
         mDayLabelCalendar = new PersianCalendar();// PersianCalendarUtils.getCalendar(language)  ;
         mCalendar = new PersianCalendar();// PersianCalendarUtils.getCalendar(language)  ;
-        today = new Time(Time.getCurrentTimezone());
-        today.setToNow();
+
+        mmToday = new Time(Time.getCurrentTimezone());
+        mmToday.setToNow();
+        mRToday = new Roozh();
+        mRToday.GregorianToPersian(mmToday.year, mmToday.month, mmToday.monthDay);
         mDayOfWeekTypeface = resources.getString(R.string.sans_serif);
         mMonthTitleTypeface = resources.getString(R.string.sans_serif);
         mCurrentDayTextColor = typedArray.getColor(R.styleable.DayPickerView_colorCurrentDay, resources.getColor(R.color.normal_day));
@@ -145,7 +149,7 @@ public class AirMonthFaView extends View {
         mWeekEndColor = typedArray.getColor(R.styleable.DayPickerView_colorWeekEndColor, resources.getColor(R.color.colorWeekEndColor));
 
         // به دست اوردن 3 ماه آینده
-        mMonthPlus3 = (new PersianCalendar()).getPersianMonth() + 3;
+        mMonthPlus3 = mRToday.getMonth() + 3;
         //  mMonthPlus3 = (today.month)  + 3;
         mDrawRect = typedArray.getBoolean(R.styleable.DayPickerView_drawRoundRect, false);
 
@@ -302,19 +306,20 @@ public class AirMonthFaView extends View {
         }
 
         if (isClick) {
-            if (mOnDayClickListener != null && (isPrevDayEnabled || !((calendarDay.month == today.month) && (calendarDay.year == today.year) && calendarDay.day < today.monthDay))) {
+            if (mOnDayClickListener != null && (isPrevDayEnabled || !((calendarDay.month == mRToday.getMonth()) && (calendarDay.year == mRToday.getYear()) && calendarDay.day < mRToday.getDay()))) {
                 mOnDayClickListener.onDayClick(this, calendarDay);
             }
         }
 
     }
 
-    private boolean sameDay(int monthDay, Time time) {
-        return (mYear == time.year) && (mMonth == time.month) && (monthDay == time.monthDay);
+    private boolean sameDay(int monthDay, Roozh time) {
+
+        return (mYear == time.getYear()) && (mMonth == time.getMonth()) && (monthDay == time.getDay());
     }
 
-    private boolean prevDay(int monthDay, Time time) {
-        return ((mYear < time.year)) || (mYear == time.year && mMonth < time.month) || (mMonth == time.month && monthDay < time.monthDay);
+    private boolean prevDay(int monthDay, Roozh time) {
+        return ((mYear < time.getYear())) || (mYear == time.getYear() && mMonth < time.getMonth()) || (mMonth == time.getMonth() && monthDay < time.getDay());
     }
 
     /**
@@ -466,7 +471,7 @@ public class AirMonthFaView extends View {
                 }
             }
 
-            if (!isPrevDayEnabled && prevDay(day, today) && today.month == mMonth && today.year == mYear) {
+            if (!isPrevDayEnabled && prevDay(day, mRToday) && mRToday.getMonth() == mMonth && mRToday.getYear() == mYear) {
                 mMonthNumPaint.setColor(mPreviousDayColor);
                 mMonthNumPaint.setTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
                 if (AirCalendarUtils.isWeekend(mYear + "-" + (mMonth + 1) + "-" + day)) {
@@ -669,12 +674,12 @@ public class AirMonthFaView extends View {
         mNumCells = CalendarUtils.getDaysInMonth(mMonth, mYear, language);
         for (int i = 0; i < mNumCells; i++) {
             final int day = i + 1;
-            if (sameDay(day, today)) {
+            if (sameDay(day, mRToday)) {
                 mHasToday = true;
                 mToday = day;
             }
 
-            mIsPrev = prevDay(day, today);
+            mIsPrev = prevDay(day, mRToday);
         }
 
         mNumRows = calculateNumRows();
