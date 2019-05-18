@@ -14,7 +14,12 @@ Airbnb-style calendar
   <img src="sc/sc3.png" width="200"/>
 </p>
 
-
+# Persian Example
+<p align="center">
+  <img src="sc/scfa1.png" width="200"/>
+  <img src="sc/scfa2.png" width="200"/>
+ 
+</p>
 
 # Usage
 
